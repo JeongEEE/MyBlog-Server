@@ -5,7 +5,7 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import me.gjkim.myblog.domain.User;
+import me.gjkim.myblog.domain.Member;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,12 +21,12 @@ import java.util.Set;
 public class TokenProvider {
   private final JwtProperties jwtProperties;
 
-  public String generateToken(User user, Duration expiredAt) {
+  public String generateToken(Member member, Duration expiredAt) {
     Date now = new Date();
-    return makeToken(new Date(now.getTime() + expiredAt.toMillis()), user);
+    return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member);
   }
 
-  private String makeToken(Date expiry, User user) {
+  private String makeToken(Date expiry, Member member) {
     // jwt 토큰 생성 함수
     Date now = new Date();
 
@@ -35,8 +35,8 @@ public class TokenProvider {
             .setIssuer(jwtProperties.getIssuer()) // 내용 iss : propertise 파일에서 설정한 값
             .setIssuedAt(now) // 내용 iat : 현재시간
             .setExpiration(expiry) // 내용 exp : expiry 맴버 변수값
-            .setSubject(user.getEmail()) // 내용 sub : 유저의 이메일
-            .claim("id", user.getId()) // 클레임 id : User ID
+            .setSubject(member.getUsername()) // 내용 sub : 유저의 이메일
+            .claim("id", member.getId()) // 클레임 id : User ID
             .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
             .compact();
   }

@@ -2,7 +2,7 @@ package me.gjkim.myblog.service;
 
 import lombok.RequiredArgsConstructor;
 import me.gjkim.myblog.config.jwt.TokenProvider;
-import me.gjkim.myblog.domain.User;
+import me.gjkim.myblog.domain.Member;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -12,7 +12,7 @@ import java.time.Duration;
 public class TokenService {
   private final TokenProvider tokenProvider;
   private final RefreshTokenService refreshTokenService;
-  private final UserService userService;
+  private final MemberService memberService;
 
   public String createNewAccessToken(String refreshToken) {
     if(!tokenProvider.validToken(refreshToken)) {
@@ -20,8 +20,8 @@ public class TokenService {
     }
 
     Long userId = refreshTokenService.findByRefreshToken(refreshToken).getUserId();
-    User user = userService.findById(userId);
+    Member member = memberService.findById(userId);
 
-    return tokenProvider.generateToken(user, Duration.ofHours(2));
+    return tokenProvider.generateToken(member, Duration.ofHours(2));
   }
 }

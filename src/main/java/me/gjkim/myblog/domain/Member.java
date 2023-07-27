@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,27 +13,33 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Table(name = "users")
+@Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class User implements UserDetails {
+public class Member implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", updatable = false)
   private Long id;
 
-  @Column(name = "email", nullable = false, unique = true)
-  private String email;
+  @Column(name = "username", nullable = false, unique = true)
+  private String username;
 
   @Column(name = "password", nullable = false)
   private String password;
 
+  @Column(name = "role", nullable = false)
+  @ColumnDefault("USER")
+  private Role role;
+
   @Builder
-  public User(String email, String password, String auth) {
-    this.email = email;
+  public Member(Long id, String username, String password, Role role) {
+    this.id = id;
+    this.username = username;
     this.password = password;
+    this.role = role;
   }
 
 
@@ -43,12 +50,16 @@ public class User implements UserDetails {
 
   @Override
   public String getUsername() {
-    return email;
+    return username;
   }
 
   @Override
   public String getPassword() {
     return password;
+  }
+
+  public Role getRole() {
+    return role;
   }
 
   @Override

@@ -2,11 +2,11 @@ package me.gjkim.myblog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.gjkim.myblog.domain.Article;
-import me.gjkim.myblog.domain.User;
+import me.gjkim.myblog.domain.Member;
 import me.gjkim.myblog.dto.AddArticleRequest;
 import me.gjkim.myblog.dto.UpdateArticleRequest;
 import me.gjkim.myblog.repository.BlogRepository;
-import me.gjkim.myblog.repository.UserRepository;
+import me.gjkim.myblog.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -28,7 +27,6 @@ import java.security.Principal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,9 +48,9 @@ class BlogApiControllerTest {
   BlogRepository blogRepository;
 
   @Autowired
-  UserRepository userRepository;
+  MemberRepository memberRepository;
 
-  User user;
+  Member member;
 
   @BeforeEach
   public void mockMvcSetUp() {
@@ -63,14 +61,14 @@ class BlogApiControllerTest {
 
   @BeforeEach
   void setSecurityContext() {
-    userRepository.deleteAll();
-    user = userRepository.save(User.builder()
-            .email("user@gmail.con")
+    memberRepository.deleteAll();
+    member = memberRepository.save(Member.builder()
+            .username("user@gmail.con")
             .password("test")
             .build());
 
     SecurityContext context = SecurityContextHolder.getContext();
-    context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
+    context.setAuthentication(new UsernamePasswordAuthenticationToken(member, member.getPassword(), member.getAuthorities()));
   }
 
   @DisplayName("addArticle: 블로그 글 추가에 성공한다.")
@@ -180,7 +178,7 @@ class BlogApiControllerTest {
   private Article createDefaultArticle() {
     return blogRepository.save(Article.builder()
             .title("title")
-            .author(user.getUsername())
+            .author(member.getUsername())
             .content("content")
             .build());
   }

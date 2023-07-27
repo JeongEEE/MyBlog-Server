@@ -1,8 +1,8 @@
 package me.gjkim.myblog.config.jwt;
 
 import io.jsonwebtoken.Jwts;
-import me.gjkim.myblog.domain.User;
-import me.gjkim.myblog.repository.UserRepository;
+import me.gjkim.myblog.domain.Member;
+import me.gjkim.myblog.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class TokenProviderTest {
   private TokenProvider tokenProvider;
 
   @Autowired
-  private UserRepository userRepository;
+  private MemberRepository memberRepository;
 
   @Autowired
   private JwtProperties jwtProperties;
@@ -32,13 +32,13 @@ public class TokenProviderTest {
   @Test
   void generateToken() { // 토큰생성 검증 테스트
     // given
-    User testUser = userRepository.save(User.builder()
-            .email("user@gmail.com")
+    Member testMember = memberRepository.save(Member.builder()
+            .username("user@gmail.com")
             .password("test")
             .build());
 
     // when
-    String token = tokenProvider.generateToken(testUser, Duration.ofDays(14));
+    String token = tokenProvider.generateToken(testMember, Duration.ofDays(14));
 
     // then
     Long userId = Jwts.parser()
@@ -47,7 +47,7 @@ public class TokenProviderTest {
             .getBody()
             .get("id", Long.class);
 
-    assertThat(userId).isEqualTo(testUser.getId());
+    assertThat(userId).isEqualTo(testMember.getId());
   }
 
   @DisplayName("validToken(): 만료된 토큰인 경우에 유효성 검증에 실패한다.")

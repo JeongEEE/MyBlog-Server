@@ -3,11 +3,11 @@ package me.gjkim.myblog.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.gjkim.myblog.config.jwt.JwtFactory;
 import me.gjkim.myblog.config.jwt.JwtProperties;
+import me.gjkim.myblog.domain.Member;
 import me.gjkim.myblog.domain.RefreshToken;
-import me.gjkim.myblog.domain.User;
 import me.gjkim.myblog.dto.CreateAccessTokenRequest;
 import me.gjkim.myblog.repository.RefreshTokenRepository;
-import me.gjkim.myblog.repository.UserRepository;
+import me.gjkim.myblog.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class TokenApiControllerTest {
   JwtProperties jwtProperties;
 
   @Autowired
-  UserRepository userRepository;
+  MemberRepository memberRepository;
 
   @Autowired
   RefreshTokenRepository refreshTokenRepository;
@@ -52,7 +52,7 @@ public class TokenApiControllerTest {
   public void mockMvcSetUp() {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .build();
-    userRepository.deleteAll();
+    memberRepository.deleteAll();
   }
 
   @DisplayName("createNewAccessToken: 새로운 액세스 토큰을 발급한다.")
@@ -61,17 +61,17 @@ public class TokenApiControllerTest {
     // given
     final String url = "/api/token";
 
-    User testUser = userRepository.save(User.builder()
-            .email("user@gmail.com")
+    Member testMember = memberRepository.save(Member.builder()
+            .username("user@gmail.com")
             .password("test")
             .build());
 
     String refreshToekn = JwtFactory.builder()
-            .claims(Map.of("id", testUser.getId()))
+            .claims(Map.of("id", testMember.getId()))
             .build()
             .createToken(jwtProperties);
 
-    refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToekn));
+    refreshTokenRepository.save(new RefreshToken(testMember.getId(), refreshToekn));
 
     CreateAccessTokenRequest request = new CreateAccessTokenRequest();
     request.setRefreshToken(refreshToekn);

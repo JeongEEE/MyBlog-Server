@@ -12,4 +12,6 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
   private String issuer;
   private String secretKey;
+  public static final String TOKEN_PREFIX = "Bearer ";
+  public static final String HEADER_STRING = "Authorization";
 }

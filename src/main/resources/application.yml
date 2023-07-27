@@ -14,6 +14,16 @@ spring:
     console:
       enabled: true
 
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    org.hibernate.SQL: info
+    root: info
+
 jwt:
+  header: Authorization
   issuer: ajufresh@gmail.com
-  secret_key: study-springboot
+  secret_key: myblog!jjD3yHK5DNOjhGcZRNOnQkiAorHepx7GKGYbQfAJ8MM0tMdjH3
